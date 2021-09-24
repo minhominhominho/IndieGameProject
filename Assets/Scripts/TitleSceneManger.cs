@@ -39,15 +39,14 @@ public class TitleSceneManger : MonoBehaviour
     private IEnumerator startAfterFadeOut()
     {
         blackPanel.SetActive(true);
-        Color c = blackPanel.GetComponent<Image>().color;
-        c = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+        
+        blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
-        while (c.a <= 1.0f)
+        while (blackPanel.GetComponent<Image>().color.a <= 1.0f)
         {
-            c = new Color(0.0f, 0.0f, 0.0f, c.a + 0.005f);
-            yield return new WaitForSeconds(0.01f);
+            blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, blackPanel.GetComponent<Image>().color.a + 0.005f);
+            yield return new WaitForSecondsRealtime(0.01f);
         }
-
         SceneManager.LoadScene(titleSceneName.ToString());
     }
 
