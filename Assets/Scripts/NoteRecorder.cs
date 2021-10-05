@@ -26,15 +26,18 @@ public class NoteRecorder : MonoBehaviour
 
     public void writeCSV()
     {
-        string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
+        string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/made105bpm.csv";
 
         using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
         {
             using (StreamWriter outStream = new StreamWriter(fileStream, Encoding.UTF8))
             {
+                int n = 0;
                 foreach (string s in notes)
                 {
-                    outStream.Write(s);
+                    string temp = s + $",{n}";
+                    outStream.WriteLine(temp);
+                    n++;
                 }
 
             }
@@ -80,10 +83,6 @@ public class NoteRecorder : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Keypad9))
             {
                 notes.Add((9).ToString());
-            }
-            else
-            {
-                notes.Add((0).ToString());
             }
         }
     }
