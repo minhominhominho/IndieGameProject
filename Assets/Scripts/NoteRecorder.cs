@@ -27,24 +27,17 @@ public class NoteRecorder : MonoBehaviour
     public void writeCSV()
     {
         string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
-       
-        try
-        {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                using (StreamWriter outStream = new StreamWriter(fileStream, Encoding.UTF8))
-                {
-                    foreach (string s in notes)
-                    {
-                        outStream.WriteLine(s);
-                    }
 
-                }
-            }
-        }
-        catch
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
         {
-            Debug.Log("Fail");
+            using (StreamWriter outStream = new StreamWriter(fileStream, Encoding.UTF8))
+            {
+                foreach (string s in notes)
+                {
+                    outStream.Write(s);
+                }
+
+            }
         }
     }
 

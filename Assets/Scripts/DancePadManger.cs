@@ -1,21 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System.Text;
 using UnityEngine.UI;
 
 public class DancePadManger : MonoBehaviour
 {
     [SerializeField]
-    private GameObject[] character = null;
+    private string songName = null;
+    private AudioSource song;
+
     [SerializeField]
     private List<GameObject> padNumbers = null;
+
     [SerializeField]
-    private GameObject target = null;
-    private List<int> numberSerial = new List<int> { 9,5, 1, 4, 3, 7, 8, 2, 6 };
-    // 나중에 게임 매니저 만들어서 거기서 리스트 파라미터로 넘겨주면서 댄스패드매니저의 메소드 부르기
-    private int lrCount = 1;
+    private GameObject redEffect = null;
+    private float redEffectFullSize = 0.91172f; // test and define it
+
+    private List<int> notes = new List<int>();
+
+    private bool isLeftFoot = true;
+
     private bool isStart = false;
-    // 나중에 통합
 
 
     void Update()
@@ -63,72 +71,85 @@ public class DancePadManger : MonoBehaviour
 
     private void inputFunc(int num)
     {
-        character[0].SetActive(false);
-
-        if (lrCount == 1)
+        if (isLeftFoot)
         {
-            character[lrCount].SetActive(false);
-            lrCount = 2;
+            // Move character's left foot
         }
         else
         {
-            character[lrCount].SetActive(false);
-            lrCount = 1;
+            // Move character's right foot
         }
 
-        character[lrCount].transform.position = padNumbers[num-1].transform.position;
-        character[lrCount].SetActive(true);
-
-        if (padNumbers[num-1].transform.childCount > 0)
+        // Red effect is stored in each pad tile so when hit the number, clear pad tile's child(red effect)
+        if (padNumbers[num - 1].transform.childCount > 0)
         {
             Debug.Log("Clear " + num + "!");
-            Destroy(padNumbers[num-1].transform.GetChild(0).gameObject);
+            Destroy(padNumbers[num - 1].transform.GetChild(0).gameObject);
         }
         else
+        {
             Debug.Log("Wrong input " + num + "!");
-
-        
+        }
     }
-
 
     public void startButton()
     {
         if (!isStart)
         {
             isStart = true;
-            StartCoroutine(dancePadControl(numberSerial));
+            song = GetComponent<AudioSource>();
+            string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/test1.csv";
+
+            using (Stream s = File.OpenRead(filePath))
+            {
+                using (StreamReader sr = new StreamReader(s))
+                {
+                    foreach(char c in sr.ReadToEnd())
+                    {
+                        notes.Add((int)Char.GetNumericValue(c));
+                    }
+                }
+            }
+
+            StartCoroutine(dancePadControl(notes));
         }
     }
 
     IEnumerator dancePadControl(List<int> list)
     {
+        song.Play();
         foreach (int n in list)
         {
-            StartCoroutine(fillRed(n - 1));
-            yield return new WaitForSeconds(0.7f);
+            if (n != 0)
+            { StartCoroutine(fillRed(n - 1)); }
+            yield return new WaitForSecondsRealtime(1/60f);
         }
 
     }
 
     IEnumerator fillRed(int num)
     {
-        GameObject redOb = Instantiate(target, padNumbers[num].transform);
+        GameObject redOb = Instantiate(redEffect, padNumbers[num].transform);
         redOb.SetActive(true);
-
         redOb.transform.position = padNumbers[num].transform.position;
+        float off = (redEffectFullSize - redOb.transform.localScale.x) / 50;
 
         while (true)
         {
             try
             {
-                if (redOb.activeInHierarchy && redOb.transform.localScale.x < 0.9f)
+                if (redOb.activeInHierarchy && redOb.transform.localScale.x < redEffectFullSize)
                 {
-                    redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + 0.02f, redOb.transform.localScale.y + 0.02f, redOb.transform.localScale.z + 0.02f);
+                    redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + off, redOb.transform.localScale.y + off, redOb.transform.localScale.z + off);
                 }
+                else
+                    break;
             }
             catch { }
 
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSecondsRealtime(0.01f);
         }
+        yield return new WaitForSecondsRealtime(0.05f);
+        Destroy(redOb);
     }
 }
