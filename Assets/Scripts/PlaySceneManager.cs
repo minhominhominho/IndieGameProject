@@ -24,7 +24,7 @@ public class PlaySceneManager : MonoBehaviour
 
         while (blackPanel.GetComponent<Image>().color.a >= 0.0f)
         {
-            blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, blackPanel.GetComponent<Image>().color.a - 0.005f);
+            blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, blackPanel.GetComponent<Image>().color.a - 0.02f);
             yield return new WaitForSecondsRealtime(0.01f);
         }
 

@@ -123,7 +123,7 @@ public class DancePadManger : MonoBehaviour
             {
                 if (redOb.activeInHierarchy && redOb.transform.localScale.x < 0.9f)
                 {
-                    redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + 0.01f, redOb.transform.localScale.y + 0.01f, redOb.transform.localScale.z + 0.01f);
+                    redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + 0.02f, redOb.transform.localScale.y + 0.02f, redOb.transform.localScale.z + 0.02f);
                 }
             }
             catch { }
