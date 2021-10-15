@@ -2891,8 +2891,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Made by\n\n\uAE40\uB3C4\uADE0\n\uC548\uC720\uBE48\n\uC815\uBBFC\uD638\nNori
-    David\n"
+  m_Text: "Made by\n\n\uC548\uC720\uBE48\n\uC815\uBBFC\uD638\nNori David\n"
 --- !u!222 &1359237676
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4581,7 +4580,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: f65668996680a4b56a4f532cd260e037, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 3e80b7f792dfd5940a009b8c92026119, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
