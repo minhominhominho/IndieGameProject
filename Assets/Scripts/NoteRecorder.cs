@@ -8,10 +8,16 @@ using System.Text;
 
 public class NoteRecorder : MonoBehaviour
 {
-    [SerializeField]
-    private string songName = null;
+    [SerializeField] private string songName = null;
+    [SerializeField] private float BPM;
+    [SerializeField] private float DIVIDER;
+    private int startingGap = 2;
+
     private AudioSource song = null;
-    private List<string> notes = new List<string>();
+    private List<string> notesNum = new List<string>();
+    private List<DateTime> notesDatetime = new List<DateTime>();
+    private List<int> notesTiming = new List<int>();
+    private DateTime startingTime;
 
     void Start()
     {
@@ -22,24 +28,30 @@ public class NoteRecorder : MonoBehaviour
     void playSong()
     {
         song.Play();
+        startingTime = DateTime.Now;
     }
 
     public void writeCSV()
     {
+        float beatCount = (float)BPM / DIVIDER;
+        for (int i = 0; i < notesNum.Count; i++)
+        {
+            notesTiming.Add((int)Math.Round(notesDatetime[i].Subtract(startingTime).TotalMilliseconds / 1000 / (1 / beatCount)));
+        }
+
         string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/made105bpm.csv";
 
         using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
         {
             using (StreamWriter outStream = new StreamWriter(fileStream, Encoding.UTF8))
             {
-                int n = 0;
-                foreach (string s in notes)
+                string temp = BPM.ToString() + ',' + DIVIDER.ToString() + ',' + '0';
+                outStream.WriteLine(temp);
+                for(int i = 0; i < notesNum.Count; i++)
                 {
-                    string temp = s + $",{n}";
+                    temp = $"{notesNum[i]},{notesTiming[i]}";
                     outStream.WriteLine(temp);
-                    n++;
                 }
-
             }
         }
     }
@@ -50,39 +62,48 @@ public class NoteRecorder : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Keypad1))
             {
-                notes.Add((1).ToString());
+                notesNum.Add((1).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad2))
             {
-                notes.Add((2).ToString());
+                notesNum.Add((2).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad3))
             {
-                notes.Add((3).ToString());
+                notesNum.Add((3).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad4))
             {
-                notes.Add((4).ToString());
+                notesNum.Add((4).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                notes.Add((5).ToString());
+                notesNum.Add((5).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                notes.Add((6).ToString());
+                notesNum.Add((6).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad7))
             {
-                notes.Add((7).ToString());
+                notesNum.Add((7).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad8))
             {
-                notes.Add((8).ToString());
+                notesNum.Add((8).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad9))
             {
-                notes.Add((9).ToString());
+                notesNum.Add((9).ToString());
+                notesDatetime.Add(DateTime.Now);
             }
         }
     }
