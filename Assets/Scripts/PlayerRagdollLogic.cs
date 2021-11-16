@@ -14,20 +14,36 @@ public class PlayerRagdollLogic : MonoBehaviour
     {
         public ConfigurableJoint joint;
         public Quaternion initRotation;
+        public float driveSpringBase;
+        public float drivePosSpringFactor = 1f;
+        public float driveAngleSpringFactor = 1f;
         public JointInfo(ConfigurableJoint joint)
         {
             this.joint = joint;
             this.initRotation = joint.transform.localRotation;
+            this.driveSpringBase = joint.angularXDrive.positionSpring;
         }
+    }
+
+    // To hold driver bone and it's 'driving force': how strong the source animation will affect the driver bone
+    [SerializeField]
+    public class DriverForceOverrideInfo
+    {
+        public GameObject bone = null;
+        public float posForce = 1f;
+        public float angleForce = 1f;
     }
 
     // Physics configs for ''stable'' ragdoll
     public float phyDriverForce = 0.25f;
+    public float phyDriverForceAngle = 0.75f;
+    public float phyDriverDampAngle = 1f;
     public int phySolverIterations = 10;
     public int phySolverVelocityIterations = 10;
     public int phyMaxAngularVelocity = 24;
     public GameObject boneHead;
     public List<GameObject> pinnedBones = new List<GameObject>(); // Bone that will be 'pinpointed' -- that will follow the original bone's transform
+    public List<DriverForceOverrideInfo> driverForceOverride = new List<DriverForceOverrideInfo>(); // Driver force overriding info
     public GameObject charRagdoll; // Simulated ragdoll Gameobject
     public GameObject charSource; // Manually animated character Gameobject
     private GameObject boneHip; // Hip bone
@@ -55,6 +71,14 @@ public class PlayerRagdollLogic : MonoBehaviour
         TBLRagdollToSource = new Dictionary<GameObject, GameObject>();
         TBLSourceToRagdoll = new Dictionary<GameObject, GameObject>();
         IndexBones();
+
+        // Override driver forces
+        foreach (var overrideInfo in driverForceOverride) // driver = KeyValuePair
+        {
+            var jointinfo = boneDrivers[overrideInfo.bone];
+            jointinfo.drivePosSpringFactor = overrideInfo.posForce;
+            jointinfo.driveAngleSpringFactor = overrideInfo.angleForce;
+        }
     }
 
     // Update is called once per frame
@@ -69,19 +93,32 @@ public class PlayerRagdollLogic : MonoBehaviour
                         src = TBLRagdollToSource[bone];
             Rigidbody rb = bone.GetComponent<Rigidbody>();
             JointInfo joint = driver.Value;
+            ConfigurableJoint cj = joint.joint;
 
             Vector3 delta = src.transform.position - bone.transform.position;
-            rb.AddForce(delta * phyDriverForce);
-            joint.joint.SetTargetRotationLocal(src.transform.localRotation, joint.initRotation);
+            rb.AddForce(delta * joint.drivePosSpringFactor * phyDriverForce);
+            
+            // Set joint spring factor
+            var xdrive = cj.angularXDrive;
+            var yzdrive = cj.angularYZDrive;
+            cj.SetTargetRotationLocal(src.transform.localRotation, joint.initRotation);
+            xdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * phyDriverForceAngle;
+            xdrive.positionDamper = phyDriverDampAngle;
+            yzdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * phyDriverForceAngle;
+            yzdrive.positionDamper = phyDriverDampAngle;
+            cj.angularXDrive = xdrive;
+            cj.angularYZDrive = yzdrive;
+            //Debug.Log(bone.name + "-> Joint drive: " + cj.angularXDrive);
         }
         
         // For each pinned bones we copy the transform of the source
+        /*
         foreach (var pinned in pinnedBones) // driver = KeyValuePair
         {
             GameObject src = TBLRagdollToSource[pinned];
             pinned.transform.position = src.transform.position;
             pinned.transform.rotation = src.transform.rotation;
-        }
+        }*/
 
         // Try to make the head bone upright
         //boneHead

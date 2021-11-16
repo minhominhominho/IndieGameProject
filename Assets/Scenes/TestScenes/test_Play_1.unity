@@ -693,8 +693,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c273b45da534a94a933fe4e619203a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phyDriverForce: 0.25
-  phySolverIterations: 10
+  phyDriverForce: 1000
+  phyDriverForceAngle: 4
+  phyDriverDampAngle: 100
+  phySolverIterations: 20
   phySolverVelocityIterations: 10
   phyMaxAngularVelocity: 24
   boneHead: {fileID: 1527200715}
@@ -705,6 +707,7 @@ MonoBehaviour:
   - {fileID: 1997687311}
   - {fileID: 863314429}
   - {fileID: 1828971791}
+  - {fileID: 507762194}
   charRagdoll: {fileID: 0}
   charSource: {fileID: 0}
 --- !u!4 &109357837
@@ -735,6 +738,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdce5ae0163cf8c45847624770127b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hipController: {fileID: 0}
+  hipAnimated: {fileID: 0}
 --- !u!4 &122667992 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 783144405172704096, guid: 583fc0d1959e0c0459d61e7fdeaae49a, type: 3}
@@ -4671,6 +4676,7 @@ MonoBehaviour:
   resultPanel: {fileID: 1686385638}
   resultText: {fileID: 145131176}
   resultScore: {fileID: 2085889386}
+  hipController: {fileID: 1361862832}
 --- !u!82 &1148409883
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4798,7 +4804,7 @@ MonoBehaviour:
   dancePadManger: {fileID: 1148409882}
   speaker: {fileID: 1870053045}
   clickAudio: {fileID: 8300000, guid: 3e80b7f792dfd5940a009b8c92026119, type: 3}
-  cam: {fileID: 0}
+  cam: {fileID: 1559084223}
   orgCamPos: {x: 0, y: 0, z: 0}
 --- !u!4 &1161700228 stripped
 Transform:
@@ -5695,7 +5701,7 @@ GameObject:
   - component: {fileID: 1361862835}
   - component: {fileID: 1361862834}
   m_Layer: 0
-  m_Name: HipControler
+  m_Name: HipController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5769,8 +5775,8 @@ ConfigurableJoint:
   m_TargetVelocity: {x: 0, y: 0, z: 0}
   m_XDrive:
     serializedVersion: 3
-    positionSpring: 100
-    positionDamper: 0
+    positionSpring: 9999999
+    positionDamper: 1000
     maximumForce: 3.4028233e+38
   m_YDrive:
     serializedVersion: 3
@@ -5779,21 +5785,21 @@ ConfigurableJoint:
     maximumForce: 3.4028233e+38
   m_ZDrive:
     serializedVersion: 3
-    positionSpring: 100
-    positionDamper: 0
+    positionSpring: 9999999
+    positionDamper: 1000
     maximumForce: 3.4028233e+38
   m_TargetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_TargetAngularVelocity: {x: 0, y: 0, z: 0}
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 9999
-    positionDamper: 0
+    positionSpring: 100
+    positionDamper: 10
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 9999
-    positionDamper: 0
+    positionSpring: 100
+    positionDamper: 10
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
     serializedVersion: 3

@@ -30,6 +30,7 @@ public class DancePadManger : MonoBehaviour
     [SerializeField] private GameObject resultPanel = null;
     [SerializeField] private TextMeshProUGUI resultText = null;
     [SerializeField] private TextMeshProUGUI resultScore = null;
+    [SerializeField] private GameObject hipController = null;
     private int playerScore = 0;
     private int playerLife;
 
@@ -109,6 +110,13 @@ public class DancePadManger : MonoBehaviour
                 mPos = new Vector3(mPos.x / Screen.width * Screen.width / miniDancepadArea.localScale.x, mPos.y / Screen.height * Screen.height / miniDancepadArea.localScale.y, 0);
                 centerOfMass.localPosition = new Vector3(centerOfMass.localPosition.x + mPos.x - mLastPos.x, centerOfMass.localPosition.y + mPos.y - mLastPos.y, 0);
                 mLastPos = mPos;
+
+                // Remap CenterOfMass's position to Hip controller's position
+                // CenterOfMass: [-0.75, 0.75], HipController: [-0.44, 0.44]
+                if (hipController)
+                {
+                    hipController.transform.position = new Vector3((float)(centerOfMass.localPosition.x / 0.75 * 0.44), hipController.transform.position.y, (float)(centerOfMass.localPosition.y / 0.75 * 0.44));
+                }
             }
 
             if(!song.isPlaying)
