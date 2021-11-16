@@ -76,7 +76,7 @@ public class TitleSceneManger : MonoBehaviour
             blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, blackPanel.GetComponent<Image>().color.a + 0.005f);
             yield return new WaitForSecondsRealtime(0.01f);
         }
-        SceneManager.LoadScene(songTitle.ToString());
+        SceneManager.LoadScene(songTitle);
     }
 
     public void StageSelectButton()

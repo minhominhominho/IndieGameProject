@@ -35,6 +35,9 @@ public class DancePadManger : MonoBehaviour
 
 
     private List<Note> notes = new List<Note>();
+    private float bpm;
+    private float divider;
+    private float makingTime;
     private Vector3 mLastPos;
     private Vector3 mPos;
 
@@ -202,17 +205,26 @@ public class DancePadManger : MonoBehaviour
             isStart = true;
             song = GetComponent<AudioSource>();
             string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
+            int timing = 1;
 
             using (Stream s = File.OpenRead(filePath))
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
                     string line = sr.ReadLine();
-                    float bpm = float.Parse(line.Split(',')[0]);
-                    float divider = float.Parse(line.Split(',')[1]);
+                    bpm = float.Parse(line.Split(',')[0]);
+                    divider = float.Parse(line.Split(',')[1]);
                     startingPoint = float.Parse(line.Split(',')[2]);
                     float beatCount = (float)bpm / divider;
                     beatInterval = 1 / beatCount;
+                    makingTime = beatInterval;
+
+                    
+                    while (makingTime < 0.5f) {
+                        makingTime += beatInterval;
+                        timing++;
+                    }
+                    
 
                     while ((line = sr.ReadLine()) != null)
                     {
@@ -226,14 +238,14 @@ public class DancePadManger : MonoBehaviour
 
             for (int i = 0; i < notes.Count; i++)
             {
-                StartCoroutine(futureNote(notes[i]));
+                StartCoroutine(futureNote(notes[i], timing));
             }
         }
     }
 
-    private IEnumerator futureNote(Note note)
-    { 
-        yield return new WaitForSecondsRealtime(startingPoint + (note._order-1) * beatInterval);
+    private IEnumerator futureNote(Note note, int timing)
+    {
+        yield return new WaitForSecondsRealtime(startingPoint + (note._order - timing) * beatInterval);
         StartCoroutine(makeNote(note._noteNum - 1));
     }
 
@@ -261,10 +273,10 @@ public class DancePadManger : MonoBehaviour
             }
             catch { }
 
-            yield return new WaitForSecondsRealtime(beatInterval / 50 * 2);
+            yield return new WaitForSecondsRealtime(makingTime / 50);
         }
-        yield return new WaitForSecondsRealtime(beatInterval);
 
+        yield return new WaitForSecondsRealtime(makingTime/10);
         try
         {
             if (redOb.activeInHierarchy)
