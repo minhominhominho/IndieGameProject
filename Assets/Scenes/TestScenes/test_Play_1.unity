@@ -693,18 +693,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c273b45da534a94a933fe4e619203a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phyDriverForce: 1000
-  phyDriverForceAngle: 4
+  isRagdoll: 0
+  phyDriverForce: 20
+  phyDriverForceAngle: 1
   phyDriverDampAngle: 100
   phySolverIterations: 20
   phySolverVelocityIterations: 10
-  phyMaxAngularVelocity: 24
+  phyMaxAngularVelocity: 30
   boneHead: {fileID: 1527200715}
   pinnedBones:
-  - {fileID: 1403798389}
-  - {fileID: 312208475}
-  - {fileID: 294399418}
-  - {fileID: 1997687311}
   - {fileID: 863314429}
   - {fileID: 1828971791}
   - {fileID: 507762194}
@@ -738,6 +735,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdce5ae0163cf8c45847624770127b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  balanceStrength: 1
+  hipBounds: {fileID: 1773461519}
   hipController: {fileID: 0}
   hipAnimated: {fileID: 0}
 --- !u!4 &122667992 stripped
@@ -8445,6 +8444,20 @@ MonoBehaviour:
   - {fileID: 1543902184}
   - {fileID: 858733461}
   - {fileID: 21781954}
+--- !u!136 &1773461519
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773461516}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.74
+  m_Height: 0.73115903
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.08238676, z: 0}
 --- !u!4 &1792354297 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1435818289852395791, guid: 583fc0d1959e0c0459d61e7fdeaae49a, type: 3}

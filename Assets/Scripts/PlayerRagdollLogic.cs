@@ -34,6 +34,7 @@ public class PlayerRagdollLogic : MonoBehaviour
         public float angleForce = 1f;
     }
 
+    public bool isRagdoll = false; // Is player in ragdoll state?
     // Physics configs for ''stable'' ragdoll
     public float phyDriverForce = 0.25f;
     public float phyDriverForceAngle = 0.75f;
@@ -50,11 +51,13 @@ public class PlayerRagdollLogic : MonoBehaviour
     private GameObject boneCOM, boneCOMProjected; // COM/Root bone (for later)
     private Dictionary<GameObject, GameObject> TBLRagdollToSource, TBLSourceToRagdoll; // Table to match/convert ragdoll's bone gameobject to source
     private Dictionary<GameObject, JointInfo> boneDrivers; // Dictionary of 'driver' bones/body parts and its joint: only this parts will 'mimic' the matching part of source
-
+    private PlayerHipControlLogic hipControlLogic;
 
     // Start is called before the first frame update
     void Start()
     {
+        hipControlLogic = gameObject.GetComponent<PlayerHipControlLogic>();
+
         if (!charRagdoll) // it's null -- try to automatically grab one
             charRagdoll = transform.Find("Ragdoll").gameObject;
         if (!charSource)
@@ -89,10 +92,13 @@ public class PlayerRagdollLogic : MonoBehaviour
         // For each driver bones we set the target rotation to that of the source
         foreach (var driver in boneDrivers) // driver = KeyValuePair
         {
+            JointInfo joint = driver.Value;
+            if (joint == null)
+                continue;
+            
             GameObject  bone = driver.Key,
                         src = TBLRagdollToSource[bone];
             Rigidbody rb = bone.GetComponent<Rigidbody>();
-            JointInfo joint = driver.Value;
             ConfigurableJoint cj = joint.joint;
 
             Vector3 delta = src.transform.position - bone.transform.position;
@@ -110,18 +116,52 @@ public class PlayerRagdollLogic : MonoBehaviour
             cj.angularYZDrive = yzdrive;
             //Debug.Log(bone.name + "-> Joint drive: " + cj.angularXDrive);
         }
-        
-        // For each pinned bones we copy the transform of the source
-        /*
-        foreach (var pinned in pinnedBones) // driver = KeyValuePair
+
+        if (!isRagdoll)
         {
-            GameObject src = TBLRagdollToSource[pinned];
-            pinned.transform.position = src.transform.position;
-            pinned.transform.rotation = src.transform.rotation;
-        }*/
+            // For each pinned bones we copy the transform of the source
+            foreach (var pinned in pinnedBones) // driver = KeyValuePair
+            {
+                try
+                {
+                    GameObject src = TBLRagdollToSource[pinned];
+                    pinned.transform.position = src.transform.position;
+                    pinned.transform.rotation = src.transform.rotation;
+                }
+                catch
+                {
+                    Debug.LogError("Pinned bone `" + pinned.name + "` has no corresponding bone on source!");
+                }
+            }
+        }
+        else
+        {
+            phyDriverForce = 0;
+            phyDriverForceAngle = 0;
+            phyDriverDampAngle = 0;
+        }
 
         // Try to make the head bone upright
         //boneHead
+    }
+
+    // Turns into ragdoll by disabling all supports
+    public void Falldown()
+    {
+        Debug.LogWarning("Ragdoll fell down!");
+        isRagdoll = true;
+        hipControlLogic.OnFallDown();
+
+        // Since we used a lot of force to move the ragdoll, we must 'dampen' the velocity to prevent ragdolls flying away everytime they fall down
+        float maxvel = 3f, maxangvel = 3f;
+        foreach (var driver in boneDrivers)
+        {
+            Rigidbody rb = driver.Key.GetComponent<Rigidbody>();
+            if (rb.velocity.magnitude > maxvel)
+                rb.velocity = rb.velocity.normalized * maxvel;
+            if (rb.angularVelocity.magnitude > maxangvel)
+                rb.angularVelocity = rb.angularVelocity.normalized * maxangvel;
+        }
     }
 
     // Scan the bones and see if they're in a proper format while also updating necessary varaibles
@@ -169,40 +209,43 @@ public class PlayerRagdollLogic : MonoBehaviour
     // Performs DFS on the child gameobjects in given bone, checking for any matching bone in the animated source and rigidbodies whatnot
     private void IndexBonesSlave(GameObject bone)
     {
+        string name = bone.name;
+        
+        // Find matching bone in the animated source
+        // Debug.Log("Search for `"+childname+"`...");
+        GameObject siblingbone = SearchObject(charSource, name, charSource.name+"/");
+        if (!siblingbone)
+        {
+            Debug.LogWarning("No matching bone found for bone `ragdoll/Character1_Reference/["+name+"]`!");
+        }
+        else // add to the table
+        {
+            TBLRagdollToSource.Add(bone, siblingbone);
+            TBLSourceToRagdoll.Add(siblingbone, bone);
+        }
+
+        // Check if this bone is the driver
+        Rigidbody rb = bone.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            var joint = bone.GetComponent<ConfigurableJoint>();
+            if (!joint)
+            {
+                //Debug.LogError("OH NO: Driver bone `"+name+"` has no ConfigurableJoint assigned!");
+                boneDrivers.Add(bone, null);
+            }
+            else 
+                boneDrivers.Add(bone, new JointInfo(joint));
+
+            // Up the physics precision to minimize glitching
+            rb.solverIterations = phySolverIterations;
+            rb.solverVelocityIterations = phySolverVelocityIterations;
+            rb.maxAngularVelocity = phyMaxAngularVelocity;
+        }
+
         foreach (Transform childtf in bone.transform) // what the hell how does this even work??
         {
             GameObject childbone = childtf.gameObject;
-            string childname = childbone.name;
-            
-            // Find matching bone in the animated source
-            // Debug.Log("Search for `"+childname+"`...");
-            GameObject siblingbone = SearchObject(charSource, childname, charSource.name+"/");
-            if (!siblingbone)
-            {
-                Debug.LogWarning("No matching bone found for bone `ragdoll/Character1_Reference/Character1_Hips/["+childname+"]`!");
-            }
-            else // add to the table
-            {
-                TBLRagdollToSource.Add(childbone, siblingbone);
-                TBLSourceToRagdoll.Add(siblingbone, childbone);
-            }
-
-            // Check if this bone is the driver
-            Rigidbody rb = childbone.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                var joint = childbone.GetComponent<ConfigurableJoint>();
-                if (!joint)
-                    Debug.LogError("OH NO: Driver bone `"+childname+"` has no ConfigurableJoint assigned!");
-                else 
-                    boneDrivers.Add(childbone, new JointInfo(joint));
-
-                // Up the physics precision to minimize glitching
-                rb.solverIterations = phySolverIterations;
-                rb.solverVelocityIterations = phySolverVelocityIterations;
-                rb.maxAngularVelocity = phyMaxAngularVelocity;
-            }
-
             // Go deeper
             IndexBonesSlave(childbone);
         }
