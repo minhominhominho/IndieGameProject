@@ -12,6 +12,8 @@ public class PlaySceneManager : MonoBehaviour
     [SerializeField] private DancePadManger dancePadManger = null;
     [SerializeField] private AudioSource speaker = null;
     [SerializeField] private AudioClip clickAudio = null;
+    [SerializeField] private GameObject cam = null;
+    [SerializeField] private Vector3 orgCamPos;
 
 
     private void Start()
@@ -32,6 +34,8 @@ public class PlaySceneManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.01f);
         }
 
+        StartCoroutine(movieCamera());
+
         timerText.text = "3";
         yield return new WaitForSecondsRealtime(1.0f);
         timerText.text = "2";
@@ -45,6 +49,22 @@ public class PlaySceneManager : MonoBehaviour
 
         dancePadManger.startNoteCreation();
     }
+
+    IEnumerator movieCamera()
+    {
+        Vector3 camPos = cam.transform.position;
+
+        while (true)
+        {
+            cam.transform.position -= (cam.transform.position - orgCamPos) * 0.02f;
+
+            if (orgCamPos.z + 0.001f < camPos.z && orgCamPos.z - 0.001f < camPos.z) break;
+
+            yield return new WaitForSeconds(0.01f);
+        }
+
+    }
+
 
     public void retryButton(string songTitle)
     {
@@ -75,7 +95,7 @@ public class PlaySceneManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("Title_1");
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }

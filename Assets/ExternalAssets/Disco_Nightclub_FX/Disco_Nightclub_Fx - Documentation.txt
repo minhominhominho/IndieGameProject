@@ -1,0 +1,15 @@
+Simply load the Festival_Tent.unity for an example scene, or drag the required prop or effect from the Prefabs folder into the Hierarchy window.
+
+Note than a lot of the Prefabs include optional Pixel Lights (real-time lights that cast shadows); by default, Unity scene has this set at 4, so you'll want to increase this value if you choose to have more in your scene (the Glitterball_WithLights prefab has 6 pixel lights alone). This setting can be found under Edit -> Project Settings -> Quality.
+
+The dance floor can be altered in a number of ways; first choose your size Prefab (either 8 or 10 panels wide). Then, to change the dance floor colour, select one of the panels and change the Emission colour to your chosen palette (the Albedo channel stays the same). Finally, you can alter the speed of the colour change by selecting the top node in the Hierarchy and then altering the Anim Speed Value in the Inspector.
+
+For best results, you may wish to add some Unity effects to the Camera. Some example settings can be found in "Textures/Effect Settings.png"
+
+Additional packs with content to complement this one are also available, such as Live Music Pack (http://u3d.as/fKA) and VIP Red Carpet Pack (http://u3d.as/ir1).
+
+Have fun!
+
+Thanks for purchasing this asset, please consider rating or writing a review about it on the Asset Store. If you have any questions then please get in touch at bendurrant@rivermillstudios.com
+
+

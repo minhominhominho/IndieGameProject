@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Title_1.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: ab9040e631dfc814f91e05978bc10415
   - enabled: 1
-    path: Assets/Scenes/Play_1.unity
-    guid: eb07101b818164140883845625fda9ea
+    path: Assets/Scenes/Stage_Dance.unity
+    guid: 57bff6ce3c08a75459551803481f3713
+  - enabled: 1
+    path: Assets/Scenes/Stage_TheFatRat.unity
+    guid: 441dab4f092633b429bb2e92298b0a6c
   m_configObjects: {}
