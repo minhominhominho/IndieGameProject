@@ -68,7 +68,7 @@ public class NoteRecorder : MonoBehaviour
                 notesTiming.Add((int)Math.Round(notesDatetime[i].Subtract(startingTime).TotalMilliseconds / 1000 / (1 / beatCount)));
             else
                 notesTiming.Add(notesTiming[i - 1] + (int)Math.Round(notesDatetime[i].Subtract(startingTime).TotalMilliseconds / 1000 / (1 / beatCount)));
-           
+
             startingTime = notesDatetime[i];
         }
 
@@ -152,8 +152,8 @@ public class NoteRecorder : MonoBehaviour
 
     IEnumerator ShowColor(int i)
     {
-        notes[i - 1].color = new Color(255,0, 0);
-        yield return new WaitForSecondsRealtime(1/(BPM / DIVIDER));
+        notes[i - 1].color = new Color(255, 0, 0);
+        yield return new WaitForSecondsRealtime(1 / (BPM / DIVIDER));
         notes[i - 1].color = new Color(255, 255, 255);
     }
 }

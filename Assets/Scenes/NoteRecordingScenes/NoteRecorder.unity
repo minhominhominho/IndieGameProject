@@ -577,9 +577,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb4e943b4211b5e41a5d22d20468b473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  songName: Dance-Benjamin Tissot(111)
-  BPM: 111
-  DIVIDER: 1
+  songName: OneStep-YACHT(115)
+  BPM: 115
+  DIVIDER: 60
   notes:
   - {fileID: 4080216548882064822}
   - {fileID: 4080216549317458034}
@@ -600,7 +600,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 85ba4ba11375a594095af63baa4309cf, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8b1df711d22125c419611d72ebd9eeb8, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

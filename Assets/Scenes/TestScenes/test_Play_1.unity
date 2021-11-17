@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4620,8 +4620,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1148409884}
   - component: {fileID: 1148409882}
-  - component: {fileID: 1148409885}
   - component: {fileID: 1148409883}
+  - component: {fileID: 1148409886}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -4638,44 +4638,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1148409881}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15b544adc8415a048b993811a9070f32, type: 3}
+  m_Script: {fileID: 11500000, guid: 094ad8d9bc4880e44bc05eeea814310d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  songName: Dance-Benjamin Tissot(111)
+  blackPanel: {fileID: 1062097124}
+  timerText: {fileID: 1719108239}
+  dancePadManger: {fileID: 1148409886}
   speaker: {fileID: 1870053045}
-  resultAudio: {fileID: 8300000, guid: 85705e7b55cd9544f817c802ba8d555d, type: 3}
-  inplayScore: {fileID: 1869005418}
-  inplayLife: {fileID: 1883783602}
-  playerMaxLife: 100
-  padNumbers:
-  - {fileID: 1617628440}
-  - {fileID: 875021241}
-  - {fileID: 2131028311}
-  - {fileID: 1575562652}
-  - {fileID: 51420676}
-  - {fileID: 768478766}
-  - {fileID: 322050233}
-  - {fileID: 2139117345}
-  - {fileID: 1176642882}
-  miniPadNumbers:
-  - {fileID: 80499325}
-  - {fileID: 985255865}
-  - {fileID: 1750412597}
-  - {fileID: 1390152485}
-  - {fileID: 1828613306}
-  - {fileID: 522542478}
-  - {fileID: 62762301}
-  - {fileID: 1314294919}
-  - {fileID: 842312681}
-  redEffect: {fileID: 341563150}
-  miniRedEffect: {fileID: 523534698}
-  miniDancepadArea: {fileID: 197938564}
-  centerOfMass: {fileID: 2147234337}
-  eMsg: {fileID: 1919129468}
-  resultPanel: {fileID: 1686385638}
-  resultText: {fileID: 145131176}
-  resultScore: {fileID: 2085889386}
-  hipController: {fileID: 1361862832}
+  clickAudio: {fileID: 8300000, guid: 3e80b7f792dfd5940a009b8c92026119, type: 3}
+  cam: {fileID: 1559084223}
+  orgCamPos: {x: 0, y: 1.404, z: -2.989}
 --- !u!82 &1148409883
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4786,7 +4758,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1148409885
+--- !u!114 &1148409886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4795,16 +4767,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 1148409881}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f2b1d3a4ff658e4990f91e0f9554996, type: 3}
+  m_Script: {fileID: 11500000, guid: 17e1f9f5a5be87e4e8c369e1e3ad3d93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackPanel: {fileID: 1062097124}
-  timerText: {fileID: 1719108239}
-  dancePadManger: {fileID: 1148409882}
+  songName: Dance-Benjamin Tissot(111)
   speaker: {fileID: 1870053045}
-  clickAudio: {fileID: 8300000, guid: 3e80b7f792dfd5940a009b8c92026119, type: 3}
-  cam: {fileID: 1559084223}
-  orgCamPos: {x: 0, y: 0, z: 0}
+  resultAudio: {fileID: 8300000, guid: 85705e7b55cd9544f817c802ba8d555d, type: 3}
+  inplayScore: {fileID: 1869005418}
+  inplayLife: {fileID: 1883783602}
+  playerMaxLife: 50
+  padNumbers:
+  - {fileID: 1617628440}
+  - {fileID: 875021241}
+  - {fileID: 2131028311}
+  - {fileID: 1575562652}
+  - {fileID: 51420676}
+  - {fileID: 768478766}
+  - {fileID: 322050233}
+  - {fileID: 2139117345}
+  - {fileID: 1176642882}
+  miniPadNumbers:
+  - {fileID: 80499325}
+  - {fileID: 985255865}
+  - {fileID: 1750412597}
+  - {fileID: 1390152485}
+  - {fileID: 1828613306}
+  - {fileID: 522542478}
+  - {fileID: 62762301}
+  - {fileID: 1314294919}
+  - {fileID: 842312681}
+  redEffect: {fileID: 341563150}
+  miniRedEffect: {fileID: 523534698}
+  miniDancepadArea: {fileID: 197938564}
+  centerOfMass: {fileID: 2147234337}
+  eMsg: {fileID: 1919129468}
+  resultPanel: {fileID: 1686385638}
+  resultText: {fileID: 145131176}
+  resultScore: {fileID: 2085889386}
+  hipController: {fileID: 1361862832}
 --- !u!4 &1161700228 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 742606929251626046, guid: 583fc0d1959e0c0459d61e7fdeaae49a, type: 3}
@@ -4968,7 +4968,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1148409885}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlaySceneManager, Assembly-CSharp
         m_MethodName: retryButton
         m_Mode: 5
@@ -7190,7 +7190,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1559084223}
   m_LocalRotation: {x: 0.13971572, y: -0, z: -0, w: 0.99019164}
-  m_LocalPosition: {x: 0, y: 1.48, z: -2.05}
+  m_LocalPosition: {x: 0, y: 3.64, z: -8.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -13360,7 +13360,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1148409885}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlaySceneManager, Assembly-CSharp
         m_MethodName: musicSelectButton
         m_Mode: 1

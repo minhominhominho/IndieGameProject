@@ -53,6 +53,8 @@ public class PlayerRagdollLogic : MonoBehaviour
     private Dictionary<GameObject, JointInfo> boneDrivers; // Dictionary of 'driver' bones/body parts and its joint: only this parts will 'mimic' the matching part of source
     private PlayerHipControlLogic hipControlLogic;
 
+    public GameObject fallEffect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -149,6 +151,10 @@ public class PlayerRagdollLogic : MonoBehaviour
     public void Falldown()
     {
         Debug.LogWarning("Ragdoll fell down!");
+        GameObject eff = Instantiate(fallEffect, pinnedBones[2].transform);
+        eff.transform.localPosition = Vector3.zero;
+        eff.SetActive(true);
+        Destroy(eff, 2f);
         isRagdoll = true;
         hipControlLogic.OnFallDown();
 

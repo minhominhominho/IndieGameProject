@@ -36,6 +36,8 @@ public class PlaySceneManager : MonoBehaviour
 
         StartCoroutine(movieCamera());
 
+        dancePadManger.startNoteCalaculation();
+
         timerText.text = "3";
         yield return new WaitForSecondsRealtime(1.0f);
         timerText.text = "2";
@@ -48,6 +50,7 @@ public class PlaySceneManager : MonoBehaviour
         blackPanel.SetActive(false);
 
         dancePadManger.startNoteCreation();
+        dancePadManger.setDancePadActive(true);
     }
 
     IEnumerator movieCamera()
@@ -62,14 +65,12 @@ public class PlaySceneManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.01f);
         }
-
     }
 
-
-    public void retryButton(string songTitle)
+    public void retryButton()
     {
         speaker.PlayOneShot(clickAudio);
-        StartCoroutine(fadeout(songTitle));
+        StartCoroutine(fadeout(gameObject.scene.name));
     }
 
     public void musicSelectButton()
@@ -89,7 +90,7 @@ public class PlaySceneManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.01f);
         }
 
-        if(songTitle != "")
+        if (songTitle != "")
         {
             SceneManager.LoadScene(songTitle.ToString());
         }

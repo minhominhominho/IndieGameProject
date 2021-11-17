@@ -11,12 +11,30 @@ using TMPro;
 [SerializeField]
 public class DancePadManger : MonoBehaviour
 {
+    private AudioSource song;
     [SerializeField] private string songName = null;
     [SerializeField] private AudioSource speaker = null;
     [SerializeField] private AudioClip resultAudio = null;
+
+    [SerializeField] private Image songBar = null;
     [SerializeField] private TextMeshProUGUI inplayScore = null;
     [SerializeField] private Image inplayLife = null;
+    [SerializeField] private Color[] lifeColor = null;
     [SerializeField] private int playerMaxLife;
+
+    [SerializeField] private GameObject resultPanel = null;
+    [SerializeField] private TextMeshProUGUI resultText = null;
+    [SerializeField] private TextMeshProUGUI resultScore = null;
+    private int playerScore = 0;
+    private int playerLife;
+
+    private List<Note> notes = new List<Note>();
+    private float bpm;
+    private float divider;
+    private float beatInterval;
+    private float makingTime;
+    private float startingPoint;
+    private int effectTiming = 1;
 
     [SerializeField] private List<GameObject> padNumbers = null;
     [SerializeField] private List<GameObject> miniPadNumbers = null;
@@ -25,35 +43,38 @@ public class DancePadManger : MonoBehaviour
     [SerializeField] private RectTransform miniDancepadArea = null;
     [SerializeField] private RectTransform centerOfMass = null;
     [SerializeField] private TextMeshProUGUI eMsg = null;
-    private float redEffectFullSize = 0.91172f; // test and define it
+    private float redEffectFullSize = 1f;//0.91172f; // test and define it
 
-    [SerializeField] private GameObject resultPanel = null;
-    [SerializeField] private TextMeshProUGUI resultText = null;
-    [SerializeField] private TextMeshProUGUI resultScore = null;
-    [SerializeField] private GameObject hipController = null;
-    private int playerScore = 0;
-    private int playerLife;
+    [SerializeField] private GameObject[] effects = null;
 
-
-    private List<Note> notes = new List<Note>();
-    private float bpm;
-    private float divider;
-    private float makingTime;
     private Vector3 mLastPos;
     private Vector3 mPos;
 
-    private AudioSource song;
     private bool isStart = false;
     private bool isMouseDragging = false;
-    private float startingPoint;
-    private float beatInterval;
     private bool isLeftFoot = true;
 
+    [SerializeField] private GameObject hipController = null;
+
+
+    public void setDancePadActive(bool check)
+    {
+        isStart = check;
+    }
 
     void Update()
     {
         if (isStart)
         {
+            if (!song.isPlaying)
+            {
+                StartCoroutine(showResult());
+            }
+            else
+            {
+                songBar.fillAmount = song.time / song.clip.length;
+            }
+
             if (Input.GetKeyDown(KeyCode.Keypad1))
             {
                 inputFunc(1);
@@ -98,7 +119,7 @@ public class DancePadManger : MonoBehaviour
                 mPos = new Vector3(mPos.x / Screen.width * Screen.width / miniDancepadArea.localScale.x, mPos.y / Screen.height * Screen.height / miniDancepadArea.localScale.y, 0);
                 mLastPos = mPos;
             }
-            
+
             if (Input.GetMouseButtonUp(1))
             {
                 isMouseDragging = false;
@@ -117,12 +138,6 @@ public class DancePadManger : MonoBehaviour
                 {
                     hipController.transform.position = new Vector3((float)(centerOfMass.localPosition.x / 0.75 * 0.44), hipController.transform.position.y, (float)(centerOfMass.localPosition.y / 0.75 * 0.44));
                 }
-            }
-
-            if(!song.isPlaying)
-            {
-                isStart = false;
-                StartCoroutine(showResult());
             }
         }
     }
@@ -143,17 +158,30 @@ public class DancePadManger : MonoBehaviour
         {
             if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.95)
             {
+                GameObject effect = Instantiate(effects[3], padNumbers[num - 1].transform.parent);
+                effect.transform.localPosition = padNumbers[num - 1].transform.localPosition;
+                effect.SetActive(true);
                 eMsg.text = "PERFECT";
                 playerScore += 10;
+                Destroy(effect, 1f);
             }
             else if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.8)
             {
+                GameObject effect = Instantiate(effects[2], padNumbers[num - 1].transform.parent);
+                effect.transform.localPosition = padNumbers[num - 1].transform.localPosition;
+                effect.SetActive(true);
                 eMsg.text = "GOOD";
                 playerScore += 5;
+                Destroy(effect, 1f);
             }
             else
-            { eMsg.text = "BAD";
+            {
+                GameObject effect = Instantiate(effects[1], padNumbers[num - 1].transform.parent);
+                effect.transform.localPosition = padNumbers[num - 1].transform.localPosition;
+                effect.SetActive(true);
+                eMsg.text = "BAD";
                 playerScore += 1;
+                Destroy(effect, 1f);
             }
 
             inplayScore.text = "Score " + playerScore.ToString();
@@ -163,31 +191,38 @@ public class DancePadManger : MonoBehaviour
         }
         else
         {
-            eMsg.text = "MISS";
-            playerLife -= 1;
-
-            inplayLife.fillAmount = (float)playerLife / playerMaxLife;
-
-            if (playerLife == 0)
-            {
-                isStart = false;
-                StartCoroutine(showResult());
-            }
+            damageLife(num-1);
         }
-
-       //StartCoroutine(setEmpty());
     }
 
-    //IEnumerator setEmpty()
-    //{
-    //    yield return new WaitForSecondsRealtime(beatInterval);
-    //    eMsg.text = "";
-    //}
+
+    private void damageLife(int num)
+    {
+        GameObject effect = Instantiate(effects[0], padNumbers[num].transform.parent);
+        effect.transform.localPosition = padNumbers[num].transform.localPosition;
+        effect.SetActive(true);
+        eMsg.text = "MISS";
+        playerLife -= 1;
+        Destroy(effect, 1f);
+
+        if (playerLife < playerMaxLife / 2)
+            inplayLife.color = lifeColor[1];
+        else if (playerLife < playerMaxLife)
+            inplayLife.color = lifeColor[0];
+
+        inplayLife.fillAmount = (float)playerLife / playerMaxLife;
+
+        if (playerLife == 0)
+        {
+            StartCoroutine(showResult());
+        }
+    }
 
     IEnumerator showResult()
     {
+        isStart = false;
         if (song.isPlaying)
-        { 
+        {
             song.Pause();
             resultText.text = "Fail!";
         }
@@ -205,67 +240,65 @@ public class DancePadManger : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
     }
 
-    public void startNoteCreation()
+    public void startNoteCalaculation()
     {
-        if (!isStart)
+        playerLife = playerMaxLife;
+
+        song = GetComponent<AudioSource>();
+        string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
+
+        using (Stream s = File.OpenRead(filePath))
         {
-            playerLife = playerMaxLife;
-            isStart = true;
-            song = GetComponent<AudioSource>();
-            string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
-            int timing = 1;
-
-            using (Stream s = File.OpenRead(filePath))
+            using (StreamReader sr = new StreamReader(s))
             {
-                using (StreamReader sr = new StreamReader(s))
+                string line = sr.ReadLine();
+                bpm = float.Parse(line.Split(',')[0]);
+                divider = float.Parse(line.Split(',')[1]);
+                startingPoint = float.Parse(line.Split(',')[2]);
+                float beatCount = (float)bpm / divider;
+                beatInterval = 1 / beatCount;
+                makingTime = beatInterval;
+
+
+                while (makingTime < 0.5f)
                 {
-                    string line = sr.ReadLine();
-                    bpm = float.Parse(line.Split(',')[0]);
-                    divider = float.Parse(line.Split(',')[1]);
-                    startingPoint = float.Parse(line.Split(',')[2]);
-                    float beatCount = (float)bpm / divider;
-                    beatInterval = 1 / beatCount;
-                    makingTime = beatInterval;
-
-                    
-                    while (makingTime < 0.5f) {
-                        makingTime += beatInterval;
-                        timing++;
-                    }
-                    
-
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        Note note = new Note(int.Parse(line.Split(',')[0]),int.Parse(line.Split(',')[1]));
-                        notes.Add(note);
-                    }
+                    makingTime += beatInterval;
+                    effectTiming++;
                 }
-            }
 
-            song.Play();
 
-            for (int i = 0; i < notes.Count; i++)
-            {
-                StartCoroutine(futureNote(notes[i], timing));
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Note note = new Note(int.Parse(line.Split(',')[0]), int.Parse(line.Split(',')[1]));
+                    notes.Add(note);
+                }
             }
         }
     }
 
-    private IEnumerator futureNote(Note note, int timing)
+    public void startNoteCreation()
     {
-        yield return new WaitForSecondsRealtime(startingPoint + (note._order - timing) * beatInterval);
-        StartCoroutine(makeNote(note._noteNum - 1));
+        song.Play();
+
+        for (int i = 0; i < notes.Count; i++)
+        {
+            StartCoroutine(futureNote(notes[i]));
+        }
     }
 
-    private IEnumerator makeNote(int num)
+    private IEnumerator futureNote(Note note)
     {
+        yield return new WaitForSecondsRealtime(startingPoint + (note._order - effectTiming) * beatInterval - 0.12f);
+
+        int num = note._noteNum - 1;
+
         GameObject redOb = Instantiate(redEffect, padNumbers[num].transform);
         GameObject miniRedOb = Instantiate(miniRedEffect, miniPadNumbers[num].transform);
         redOb.SetActive(true);
         miniRedOb.SetActive(true);
         redOb.transform.position = padNumbers[num].transform.position;
         miniRedOb.transform.position = miniPadNumbers[num].transform.position;
-        float off = (redEffectFullSize - redOb.transform.localScale.x) / 50;
+        float off = (redEffectFullSize - redOb.transform.localScale.x) / 25;
 
         while (true)
         {
@@ -281,31 +314,24 @@ public class DancePadManger : MonoBehaviour
             }
             catch { }
 
-            yield return new WaitForSecondsRealtime(makingTime / 50);
+            yield return new WaitForSecondsRealtime(makingTime / 25);
         }
 
-        yield return new WaitForSecondsRealtime(makingTime/10);
+        yield return new WaitForSecondsRealtime(makingTime / 10);
         try
         {
             if (redOb.activeInHierarchy)
             {
-                eMsg.text = "MISS";
-                playerLife -= 1;
-
-                inplayLife.fillAmount = (float)playerLife / playerMaxLife;
-
-                if (playerLife == 0)
-                {
-                    isStart = false;
-                    StartCoroutine(showResult());
-                }
+                damageLife(num);
 
                 Destroy(redOb);
                 Destroy(miniRedOb);
             }
         }
         catch { }
+
     }
+
 
     class Note
     {

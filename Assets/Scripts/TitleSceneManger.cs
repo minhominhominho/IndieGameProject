@@ -20,7 +20,7 @@ public class TitleSceneManger : MonoBehaviour
     [SerializeField] private GameObject blackPanel = null;
 
     private Coroutine startcoroutine;
-    
+
 
     private void Awake()
     {
@@ -43,6 +43,7 @@ public class TitleSceneManger : MonoBehaviour
         TextMeshProUGUI titleText = title.GetComponentInChildren<TextMeshProUGUI>();
 
         yield return new WaitForSeconds(3f);
+        GetComponent<AudioSource>().Play();
 
         while (titleImg.color.a > 0)
         {
@@ -61,18 +62,19 @@ public class TitleSceneManger : MonoBehaviour
 
     public void StartButton(string songTitle)
     {
-        speaker.PlayOneShot(clickSound);
+        // speaker.PlayOneShot(clickSound);
         StartCoroutine(startAfterFadeOut(songTitle));
     }
 
     private IEnumerator startAfterFadeOut(string songTitle)
     {
         blackPanel.SetActive(true);
-        
+
         blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
         while (blackPanel.GetComponent<Image>().color.a <= 1.0f)
         {
+            GetComponent<AudioSource>().volume -= 0.005f;
             blackPanel.GetComponent<Image>().color = new Color(0.0f, 0.0f, 0.0f, blackPanel.GetComponent<Image>().color.a + 0.005f);
             yield return new WaitForSecondsRealtime(0.01f);
         }
@@ -81,28 +83,28 @@ public class TitleSceneManger : MonoBehaviour
 
     public void StageSelectButton()
     {
-        speaker.PlayOneShot(clickSound);
+        // speaker.PlayOneShot(clickSound);
         menu.SetActive(false);
         stageSelect.SetActive(true);
     }
 
     public void SettingButton()
     {
-        speaker.PlayOneShot(clickSound);
+        // speaker.PlayOneShot(clickSound);
         menu.SetActive(false);
         setting.SetActive(true);
     }
 
     public void CreditButton()
     {
-        speaker.PlayOneShot(clickSound);
+        // speaker.PlayOneShot(clickSound);
         menu.SetActive(false);
         credit.SetActive(true);
     }
 
     public void BackToTitleButton()
     {
-        speaker.PlayOneShot(clickSound);
+        //  speaker.PlayOneShot(clickSound);
         menu.SetActive(true);
         stageSelect.SetActive(false);
         setting.SetActive(false);
@@ -111,7 +113,7 @@ public class TitleSceneManger : MonoBehaviour
 
     public void EndButton()
     {
-        speaker.PlayOneShot(clickSound);
+        // speaker.PlayOneShot(clickSound);
         Application.Quit();
     }
 }
