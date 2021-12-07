@@ -39,16 +39,18 @@ public class TitleSceneManger : MonoBehaviour
     IEnumerator fadeTitle()
     {
         speaker.PlayOneShot(titleSound);
-        Image titleImg = title.GetComponentInChildren<Image>();
-        TextMeshProUGUI titleText = title.GetComponentInChildren<TextMeshProUGUI>();
+        Image titleBG = title.transform.Find("BG").GetComponent<Image>();
+        Image titleLogo = title.transform.Find("Logo").GetComponent<Image>();
+        //Image titleBG = title.GetComponentInChildren<Image>();
+        //TextMeshProUGUI titleText = title.GetComponentInChildren<TextMeshProUGUI>();
 
         yield return new WaitForSeconds(3f);
         GetComponent<AudioSource>().Play();
 
-        while (titleImg.color.a > 0)
+        while (titleBG.color.a > 0)
         {
-            titleImg.color = new Color(titleImg.color.r, titleImg.color.g, titleImg.color.b, titleImg.color.a - 0.01f);
-            titleText.color = new Color(titleText.color.r, titleText.color.g, titleText.color.b, titleText.color.a - 0.01f);
+            titleBG.color = new Color(titleBG.color.r, titleBG.color.g, titleBG.color.b, titleBG.color.a - 0.01f);
+            titleLogo.color = new Color(titleLogo.color.r, titleLogo.color.g, titleLogo.color.b, titleLogo.color.a - 0.01f);
 
             yield return new WaitForSeconds(0.01f);
         }

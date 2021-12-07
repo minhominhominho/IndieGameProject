@@ -18,6 +18,7 @@ public class DancePadManger : MonoBehaviour
 
     public Image songBar = null;
     public TextMeshProUGUI inplayScore = null;
+    public TextMeshProUGUI inplayCombo = null;
     public Image inplayLife = null;
     public Color[] lifeColor = null;
     public int playerMaxLife;
@@ -67,6 +68,11 @@ public class DancePadManger : MonoBehaviour
     public Vector3 targetPosition;
     public bool isLeft = false;
     public bool isRight = false;
+    // Combo system
+    private int comboCount = 0;
+    public int comboUnit = 5; // 5x combo: 2x multiplier, 10x combo: 3x multiplier etc...
+    private int comboMultiplier = 1;
+    public List<AudioClip> comboAudio = new List<AudioClip>(); // List of combo sounds. index will be determined by combo multiplier.
 
     public void setDancePadActive(bool check)
     {
@@ -234,6 +240,8 @@ public class DancePadManger : MonoBehaviour
 
             inplayScore.text = "Score " + playerScore.ToString();
 
+            setCombo(comboCount + 1);
+
             Destroy(padNumbers[num - 1].transform.GetChild(0).gameObject);
             Destroy(miniPadNumbers[num - 1].transform.GetChild(0).gameObject);
         }
@@ -259,6 +267,8 @@ public class DancePadManger : MonoBehaviour
             inplayLife.color = lifeColor[0];
 
         inplayLife.fillAmount = (float)playerLife / playerMaxLife;
+
+        setCombo(0);
 
         if (playerLife == 0)
         {
@@ -400,6 +410,36 @@ public class DancePadManger : MonoBehaviour
         }
         catch { }
 
+    }
+
+    private void setCombo (int combo)
+    {
+        comboCount = combo;
+        int newmultiplier = 1 + (comboCount / comboUnit);
+
+        // Check for combo multiplier increase
+        if (newmultiplier > comboMultiplier)
+        {
+            // Play sound
+            AudioClip snd = comboAudio[ Math.Min(newmultiplier - 2, comboAudio.Count - 2) ];
+            speaker.PlayOneShot(snd);
+
+            // Play cheers
+            if (newmultiplier == 4)
+            {
+                snd = comboAudio[ comboAudio.Count - 1 ];
+                speaker.PlayOneShot(snd);
+            }
+            // TODO: Show combo UI
+        }
+
+        // Update combo
+        // <size=50%><color=#FFFFFF>40</color> combo</size>\n<color=#FFFFFF>2x
+        comboMultiplier = newmultiplier;
+        if (comboMultiplier > 1)
+            inplayCombo.text = "<size=50%><color=#FFFFFF>" + comboCount + "</color> combo</size>\n<color=#FFFFFF>" + comboMultiplier + "x!";
+        else
+            inplayCombo.text = "<size=50%><color=#FFFFFF>" + comboCount + "</color> combo</size>\n<color=#FFFFFF88>" + comboMultiplier + "x!";
     }
 
 

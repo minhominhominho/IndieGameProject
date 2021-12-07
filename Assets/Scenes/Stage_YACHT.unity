@@ -83509,6 +83509,140 @@ Transform:
   m_Father: {fileID: 1428664948}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1577300700
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1577300701}
+  - component: {fileID: 1577300703}
+  - component: {fileID: 1577300702}
+  m_Layer: 5
+  m_Name: Combo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1577300701
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577300700}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4221241232903849698}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -370.69995, y: 216.33997}
+  m_SizeDelta: {x: 409.6255, y: 125}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1577300702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577300700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: <size=50%><color=#FFFFFF>40</color> combo</size>\n<color=#FFFFFF>2x
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: e43ff04a7f4d4d84fbcb59992e3070ac, type: 2}
+  m_sharedMaterial: {fileID: 2036012363771578507, guid: e43ff04a7f4d4d84fbcb59992e3070ac, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 1
+  m_colorMode: 2
+  m_fontColorGradient:
+    topLeft: {r: 0.986065, g: 0.514151, b: 1, a: 1}
+    topRight: {r: 0.986065, g: 0.514151, b: 1, a: 1}
+    bottomLeft: {r: 0.18974723, g: 0.65228456, b: 0.9811321, a: 1}
+    bottomRight: {r: 0.18974723, g: 0.65228456, b: 0.9811321, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 100
+  m_fontSizeBase: 100
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 1
+  m_HorizontalAlignment: 4
+  m_VerticalAlignment: 1024
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 0
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1577300703
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577300700}
+  m_CullTransparentMesh: 1
 --- !u!1 &1609544924
 GameObject:
   m_ObjectHideFlags: 0
@@ -94605,7 +94739,7 @@ RectTransform:
   m_Children:
   - {fileID: 4221241233842828206}
   m_Father: {fileID: 4221241232903849698}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -94783,6 +94917,7 @@ RectTransform:
   - {fileID: 4221241233471778961}
   - {fileID: 1072798692}
   - {fileID: 4221241232054369444}
+  - {fileID: 1577300701}
   - {fileID: 4221241233508066907}
   - {fileID: 4221241232381649351}
   - {fileID: 4221241233812308679}
@@ -95537,7 +95672,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4221241232903849698}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -95959,7 +96094,7 @@ RectTransform:
   - {fileID: 4221241233320667399}
   - {fileID: 4901122780444634418}
   m_Father: {fileID: 4221241232903849698}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -130323,6 +130458,7 @@ MonoBehaviour:
   resultAudio: {fileID: 8300000, guid: 85705e7b55cd9544f817c802ba8d555d, type: 3}
   songBar: {fileID: 1787526575}
   inplayScore: {fileID: 4221241233726485322}
+  inplayCombo: {fileID: 1577300702}
   inplayLife: {fileID: 4221241233471778962}
   lifeColor:
   - {r: 1, g: 0.62513876, b: 0.504717, a: 1}
@@ -130376,6 +130512,12 @@ MonoBehaviour:
   targetPosition: {x: 0, y: 0, z: 0}
   isLeft: 0
   isRight: 0
+  comboUnit: 5
+  comboAudio:
+  - {fileID: 8300000, guid: 0af40839339f7fb43ad7451ebee302d5, type: 3}
+  - {fileID: 8300000, guid: d60397576ff214b449cc1c46575ab878, type: 3}
+  - {fileID: 8300000, guid: 44ed3b6a0fa241a4d986f04914d1c3a5, type: 3}
+  - {fileID: 8300000, guid: 679805f4c6b2f164b811c494a198be51, type: 3}
 --- !u!4 &9063388182619530906
 Transform:
   m_ObjectHideFlags: 0
