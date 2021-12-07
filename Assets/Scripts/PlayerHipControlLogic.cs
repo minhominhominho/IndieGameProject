@@ -20,7 +20,7 @@ public class PlayerHipControlLogic : MonoBehaviour
         ragdollLogic = gameObject.GetComponent<PlayerRagdollLogic>();
 
         hipController = transform.Find("Ragdoll/Character1_Reference/Character1_COM_root/Character1_COM_com/HipController").gameObject;
-        hipAnimated = transform.Find("Animated/Character1_Reference/Character1_Hips").gameObject;
+        //hipAnimated = transform.Find("Animated/Character1_Reference/Character1_Hips").gameObject;
 
         controllerJoint = hipController.GetComponent<ConfigurableJoint>();
         jointXYZDriveSpring = new Vector3(controllerJoint.xDrive.positionSpring, controllerJoint.yDrive.positionSpring, controllerJoint.zDrive.positionSpring);

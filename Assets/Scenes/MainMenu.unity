@@ -1241,7 +1241,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: The Fat Rat
+  m_text: Unity
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e43ff04a7f4d4d84fbcb59992e3070ac, type: 2}
   m_sharedMaterial: {fileID: 2036012363771578507, guid: e43ff04a7f4d4d84fbcb59992e3070ac, type: 2}
@@ -2821,7 +2821,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Stage_TheFatRat
+          m_StringArgument: Stage_Unity
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &986717030
@@ -4389,7 +4389,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1584192163

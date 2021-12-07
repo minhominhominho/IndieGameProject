@@ -12,19 +12,19 @@ using TMPro;
 public class DancePadManger : MonoBehaviour
 {
     private AudioSource song;
-    [SerializeField] private string songName = null;
-    [SerializeField] private AudioSource speaker = null;
-    [SerializeField] private AudioClip resultAudio = null;
+    public string songName = null;
+    public AudioSource speaker = null;
+    public AudioClip resultAudio = null;
 
-    [SerializeField] private Image songBar = null;
-    [SerializeField] private TextMeshProUGUI inplayScore = null;
-    [SerializeField] private Image inplayLife = null;
-    [SerializeField] private Color[] lifeColor = null;
-    [SerializeField] private int playerMaxLife;
+    public Image songBar = null;
+    public TextMeshProUGUI inplayScore = null;
+    public Image inplayLife = null;
+    public Color[] lifeColor = null;
+    public int playerMaxLife;
 
-    [SerializeField] private GameObject resultPanel = null;
-    [SerializeField] private TextMeshProUGUI resultText = null;
-    [SerializeField] private TextMeshProUGUI resultScore = null;
+    public GameObject resultPanel = null;
+    public TextMeshProUGUI resultText = null;
+    public TextMeshProUGUI resultScore = null;
     private int playerScore = 0;
     private int playerLife;
 
@@ -36,43 +36,59 @@ public class DancePadManger : MonoBehaviour
     private float startingPoint;
     private int effectTiming = 1;
 
-    [SerializeField] private List<GameObject> padNumbers = null;
-    [SerializeField] private List<GameObject> miniPadNumbers = null;
-    [SerializeField] private GameObject redEffect = null;
-    [SerializeField] private GameObject miniRedEffect = null;
-    [SerializeField] private RectTransform miniDancepadArea = null;
-    [SerializeField] private RectTransform centerOfMass = null;
-    [SerializeField] private TextMeshProUGUI eMsg = null;
+    public List<GameObject> padNumbers = null;
+    public List<GameObject> miniPadNumbers = null;
+    public GameObject redEffect = null;
+    public GameObject miniRedEffect = null;
+    public RectTransform miniDancepadArea = null;
+    public RectTransform centerOfMass = null;
+    public Color[] centerOfMassColor = null;
+    public TextMeshProUGUI eMsg = null;
     private float redEffectFullSize = 1f;//0.91172f; // test and define it
 
-    [SerializeField] private GameObject[] effects = null;
+    public GameObject[] effects = null;
 
     private Vector3 mLastPos;
     private Vector3 mPos;
 
     private bool isStart = false;
+    private bool isFall = false;
     private bool isMouseDragging = false;
-    private bool isLeftFoot = true;
 
-    [SerializeField] private GameObject hipController = null;
+    public GameObject playerRightFoot = null;
+    public GameObject playerLeftFoot = null;
+    public GameObject hipController = null;
+    public PlayerRagdollLogic ragdollLogic = null;
+    public float hipDistanceOffset = 0.5f;
+    [HideInInspector] public int warningCount = 0;
 
+    [HideInInspector] public Vector3 leftTargetPosition;
+    [HideInInspector] public Vector3 rightTargetPosition;
+    public Vector3 targetPosition;
+    public bool isLeft = false;
+    public bool isRight = false;
 
     public void setDancePadActive(bool check)
     {
         isStart = check;
+        leftTargetPosition = playerLeftFoot.transform.position;
+        rightTargetPosition = playerRightFoot.transform.position;
     }
 
     void Update()
     {
         if (isStart)
         {
-            if (!song.isPlaying)
+            if (song)
             {
-                StartCoroutine(showResult());
-            }
-            else
-            {
-                songBar.fillAmount = song.time / song.clip.length;
+                if (!song.isPlaying)
+                {
+                    StartCoroutine(showResult());
+                }
+                else
+                {
+                    songBar.fillAmount = song.time / song.clip.length;
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Keypad1))
@@ -120,6 +136,10 @@ public class DancePadManger : MonoBehaviour
                 mLastPos = mPos;
             }
 
+            ragdollLogic.leftFootTarget = leftTargetPosition;
+            ragdollLogic.rightFootTarget = rightTargetPosition;
+
+
             if (Input.GetMouseButtonUp(1))
             {
                 isMouseDragging = false;
@@ -139,24 +159,52 @@ public class DancePadManger : MonoBehaviour
                     hipController.transform.position = new Vector3((float)(centerOfMass.localPosition.x / 0.75 * 0.44), hipController.transform.position.y, (float)(centerOfMass.localPosition.y / 0.75 * 0.44));
                 }
             }
+
+            Vector3 heapVec = new Vector3(hipController.transform.position.x, 0, hipController.transform.position.z);
+            Vector3 leftVec = new Vector3(playerLeftFoot.transform.position.x, 0, playerLeftFoot.transform.position.z);
+            Vector3 rightVec = new Vector3(playerRightFoot.transform.position.x, 0, playerRightFoot.transform.position.z);
+            if (Vector3.Distance(leftVec, rightVec) + hipDistanceOffset/2 > Vector3.Distance(leftVec, heapVec) + Vector3.Distance(rightVec, heapVec))
+            {
+                warningCount = 0;
+                centerOfMass.GetComponent<Image>().color = centerOfMassColor[0];
+            }
+            else if (Vector3.Distance(leftVec, rightVec) + hipDistanceOffset > Vector3.Distance(leftVec, heapVec) + Vector3.Distance(rightVec, heapVec))
+            {
+                warningCount = 0;
+                centerOfMass.GetComponent<Image>().color = centerOfMassColor[1];
+            }
+            else if (Vector3.Distance(leftVec, rightVec) + hipDistanceOffset < Vector3.Distance(leftVec, heapVec) + Vector3.Distance(rightVec, heapVec))
+            {
+                warningCount++;
+                centerOfMass.GetComponent<Image>().color = centerOfMassColor[2];
+                if (warningCount > 60)
+                {
+                    ragdollLogic.Falldown();
+                    isFall = true;
+                    StartCoroutine(showResult());
+                }
+            }
         }
     }
 
     private void inputFunc(int num)
     {
-        if (isLeftFoot)
+        if (isLeft)
         {
-            // Move character's left foot
+            isLeft = false;
+            leftTargetPosition = padNumbers[num - 1].transform.position + new Vector3(0, 0.1f, 0);
         }
         else
         {
-            // Move character's right foot
+            isLeft = true;
+            rightTargetPosition = padNumbers[num - 1].transform.position + new Vector3(0, 0.1f, 0);
         }
+
 
         // Red effect is stored in each pad tile so when hit the number, clear pad tile's child(red effect)
         if (padNumbers[num - 1].transform.childCount > 0)
         {
-            if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.95)
+            if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.99)
             {
                 GameObject effect = Instantiate(effects[3], padNumbers[num - 1].transform.parent);
                 effect.transform.localPosition = padNumbers[num - 1].transform.localPosition;
@@ -165,7 +213,7 @@ public class DancePadManger : MonoBehaviour
                 playerScore += 10;
                 Destroy(effect, 1f);
             }
-            else if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.8)
+            else if (padNumbers[num - 1].transform.GetChild(0).gameObject.transform.localScale.x / redEffectFullSize > 0.6)
             {
                 GameObject effect = Instantiate(effects[2], padNumbers[num - 1].transform.parent);
                 effect.transform.localPosition = padNumbers[num - 1].transform.localPosition;
@@ -191,7 +239,7 @@ public class DancePadManger : MonoBehaviour
         }
         else
         {
-            damageLife(num-1);
+            damageLife(num - 1);
         }
     }
 
@@ -221,10 +269,15 @@ public class DancePadManger : MonoBehaviour
     IEnumerator showResult()
     {
         isStart = false;
+        
         if (song.isPlaying)
         {
             song.Pause();
             resultText.text = "Fail!";
+            if (isFall)
+            {
+                resultText.text = "Fall!";
+            }
         }
         else
         {
@@ -278,17 +331,20 @@ public class DancePadManger : MonoBehaviour
 
     public void startNoteCreation()
     {
-        song.Play();
-
-        for (int i = 0; i < notes.Count; i++)
+        if (song)
         {
-            StartCoroutine(futureNote(notes[i]));
+            song.Play();
+
+            for (int i = 0; i < notes.Count; i++)
+            {
+                StartCoroutine(futureNote(notes[i]));
+            }
         }
     }
 
     private IEnumerator futureNote(Note note)
     {
-        yield return new WaitForSecondsRealtime(startingPoint + (note._order - effectTiming) * beatInterval - 0.12f);
+        yield return new WaitForSecondsRealtime(startingPoint + (note._order - effectTiming) * beatInterval);   // last float is offset
 
         int num = note._noteNum - 1;
 
@@ -299,6 +355,8 @@ public class DancePadManger : MonoBehaviour
         redOb.transform.position = padNumbers[num].transform.position;
         miniRedOb.transform.position = miniPadNumbers[num].transform.position;
         float off = (redEffectFullSize - redOb.transform.localScale.x) / 25;
+        int check = 0;
+        Color c = redOb.GetComponent<Image>().color;
 
         while (true)
         {
@@ -306,6 +364,18 @@ public class DancePadManger : MonoBehaviour
             {
                 if (redOb.activeInHierarchy && redOb.transform.localScale.x < redEffectFullSize)
                 {
+                    if (redOb.transform.localScale.x / redEffectFullSize > 0.6 && check == 0)
+                    {
+                        check++;
+                        redOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 0.6f);
+                        miniRedOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 0.6f);
+                    }
+                    else if (redOb.transform.localScale.x / redEffectFullSize > 0.99 && check == 1)
+                    {
+                        check++;
+                        redOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 1);
+                        miniRedOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 1);
+                    }
                     redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + off, redOb.transform.localScale.y + off, redOb.transform.localScale.z + off);
                     miniRedOb.transform.localScale = new Vector3(miniRedOb.transform.localScale.x + off, miniRedOb.transform.localScale.y + off, miniRedOb.transform.localScale.z + off);
                 }
@@ -317,7 +387,7 @@ public class DancePadManger : MonoBehaviour
             yield return new WaitForSecondsRealtime(makingTime / 25);
         }
 
-        yield return new WaitForSecondsRealtime(makingTime / 10);
+        yield return new WaitForSecondsRealtime(makingTime / 5);
         try
         {
             if (redOb.activeInHierarchy)

@@ -36,13 +36,20 @@ public class PlayerRagdollLogic : MonoBehaviour
 
     public bool isRagdoll = false; // Is player in ragdoll state?
     // Physics configs for ''stable'' ragdoll
+    public float phyAnimationForce = 0f;
     public float phyDriverForce = 0.25f;
     public float phyDriverForceAngle = 0.75f;
     public float phyDriverDampAngle = 1f;
     public int phySolverIterations = 10;
     public int phySolverVelocityIterations = 10;
     public int phyMaxAngularVelocity = 24;
+    // For making the ragdoll stand upright
     public GameObject boneHead;
+    public float headDriverForce = 500f;
+    public float headDriverForceAngle = 300f;
+    // For controlling the foot
+    public GameObject boneLeftFoot, boneRightFoot;
+    public Vector3 leftFootTarget, rightFootTarget;
     public List<GameObject> pinnedBones = new List<GameObject>(); // Bone that will be 'pinpointed' -- that will follow the original bone's transform
     public List<DriverForceOverrideInfo> driverForceOverride = new List<DriverForceOverrideInfo>(); // Driver force overriding info
     public GameObject charRagdoll; // Simulated ragdoll Gameobject
@@ -64,13 +71,13 @@ public class PlayerRagdollLogic : MonoBehaviour
             charRagdoll = transform.Find("Ragdoll").gameObject;
         if (!charSource)
             charSource = transform.Find("Animated").gameObject;
-        
+
         if (!charRagdoll) // still didn't found the ragdoll gameobject? we got a real problem
             Debug.LogError("OH NO: Couldn't find the Ragdoll Gameobject!!!");
         if (!charSource) // still didn't found the source gameobject? we got a real problem
             Debug.LogError("OH NO: Couldn't find the Animated source Gameobject!!!");
         if (charRagdoll && charSource)
-            Debug.Log("Found GameObjects: Ragdoll=>`"+charRagdoll.name+"`, Source=>`"+charSource.name+"`");
+            Debug.Log("Found GameObjects: Ragdoll=>`" + charRagdoll.name + "`, Source=>`" + charSource.name + "`");
 
         boneDrivers = new Dictionary<GameObject, JointInfo>();
         TBLRagdollToSource = new Dictionary<GameObject, GameObject>();
@@ -90,37 +97,36 @@ public class PlayerRagdollLogic : MonoBehaviour
     void FixedUpdate()
     {
         float force = 0.5f;
-        
+
         // For each driver bones we set the target rotation to that of the source
+        float driverForceAngle = phyAnimationForce * phyDriverForceAngle,
+                driverForce = phyAnimationForce * phyDriverForce,
+                driverDampAngle = phyAnimationForce * phyDriverDampAngle;
+
         foreach (var driver in boneDrivers) // driver = KeyValuePair
         {
             JointInfo joint = driver.Value;
             if (joint == null)
                 continue;
-            
-            GameObject  bone = driver.Key,
-                        src = TBLRagdollToSource[bone];
-            Rigidbody rb = bone.GetComponent<Rigidbody>();
-            ConfigurableJoint cj = joint.joint;
-
-            Vector3 delta = src.transform.position - bone.transform.position;
-            rb.AddForce(delta * joint.drivePosSpringFactor * phyDriverForce);
-            
-            // Set joint spring factor
-            var xdrive = cj.angularXDrive;
-            var yzdrive = cj.angularYZDrive;
-            cj.SetTargetRotationLocal(src.transform.localRotation, joint.initRotation);
-            xdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * phyDriverForceAngle;
-            xdrive.positionDamper = phyDriverDampAngle;
-            yzdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * phyDriverForceAngle;
-            yzdrive.positionDamper = phyDriverDampAngle;
-            cj.angularXDrive = xdrive;
-            cj.angularYZDrive = yzdrive;
-            //Debug.Log(bone.name + "-> Joint drive: " + cj.angularXDrive);
+            //FollowAnimation(joint, driver.Key, TBLRagdollToSource[driver.Key].transform.position, TBLRagdollToSource[driver.Key].transform.localRotation, false, true, true, true, driverForce, driverForceAngle, driverDampAngle);
+            FollowAnimation(joint, driver.Key, TBLRagdollToSource[driver.Key].transform.position, TBLRagdollToSource[driver.Key].transform.localRotation, false, false, false, false, driverForce, driverForceAngle, driverDampAngle);
         }
 
         if (!isRagdoll)
         {
+            // Make the head stand upright by copying the rotation and z-position
+            FollowAnimation(boneDrivers[boneHead], boneHead, TBLRagdollToSource[boneHead].transform.position, TBLRagdollToSource[boneHead].transform.localRotation, true, false, true, false, headDriverForce, headDriverForceAngle, phyDriverDampAngle);
+            //
+
+            // Move the feet
+            FollowAnimation(boneDrivers[boneLeftFoot], boneLeftFoot, leftFootTarget, Quaternion.LookRotation(new Vector3(0, 0, 1)), true, true, true, true, phyDriverForce, phyDriverForceAngle, phyDriverDampAngle);
+            FollowAnimation(boneDrivers[boneRightFoot], boneRightFoot, rightFootTarget, Quaternion.LookRotation(new Vector3(0, 0, 1)), true, true, true, true, phyDriverForce, phyDriverForceAngle, phyDriverDampAngle);
+            boneLeftFoot.transform.position = leftFootTarget;
+            boneRightFoot.transform.position = rightFootTarget;
+            //boneLeftFoot.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1));//src.transform.rotation;
+            //boneRightFoot.transform.rotation = Quaternion.LookRotation(new Vector3(0, 0, 1));//src.transform.rotation;
+            //
+            /*
             // For each pinned bones we copy the transform of the source
             foreach (var pinned in pinnedBones) // driver = KeyValuePair
             {
@@ -134,7 +140,7 @@ public class PlayerRagdollLogic : MonoBehaviour
                 {
                     Debug.LogError("Pinned bone `" + pinned.name + "` has no corresponding bone on source!");
                 }
-            }
+            }*/
         }
         else
         {
@@ -147,11 +153,20 @@ public class PlayerRagdollLogic : MonoBehaviour
         //boneHead
     }
 
+    void Update()
+    {
+        if (!isRagdoll)
+        {
+            //boneLeftFoot.transform.position = leftFootTarget;
+            //boneRightFoot.transform.position = rightFootTarget;
+        }
+    }
+
     // Turns into ragdoll by disabling all supports
     public void Falldown()
     {
         Debug.LogWarning("Ragdoll fell down!");
-        GameObject eff = Instantiate(fallEffect, pinnedBones[2].transform);
+        GameObject eff = Instantiate(fallEffect, boneHip.transform);
         eff.transform.localPosition = Vector3.zero;
         eff.SetActive(true);
         Destroy(eff, 2f);
@@ -180,7 +195,7 @@ public class PlayerRagdollLogic : MonoBehaviour
         boneCOMProjected = charRagdoll.transform.Find("Character1_Reference/Character1_COM_root/Character1_COM_com/Character1_COM_proj").gameObject;
         if (!boneHip || !boneCOM || !boneCOMProjected)
         {
-            Debug.LogError("OH NO: Hip/COM Bones does not exist OR in not proper format (ragdoll/Character1_Reference/Character1_Hips=`"+boneHip+"`, ragdoll/Character1_Reference/Character1_COM_root/Character1_COM_com=`"+boneCOM+"`, ragdoll/Character1_Reference/Character1_COM_root/Character1_COM_com/Character1_COM_proj=`"+boneCOMProjected+"`)");
+            Debug.LogError("OH NO: Hip/COM Bones does not exist OR in not proper format (ragdoll/Character1_Reference/Character1_Hips=`" + boneHip + "`, ragdoll/Character1_Reference/Character1_COM_root/Character1_COM_com=`" + boneCOM + "`, ragdoll/Character1_Reference/Character1_COM_root/Character1_COM_com/Character1_COM_proj=`" + boneCOMProjected + "`)");
             return;
         }
 
@@ -195,19 +210,19 @@ public class PlayerRagdollLogic : MonoBehaviour
         string cat = "";
         foreach (var driver in boneDrivers) // driver = KeyValuePair
         {
-            cat += " * `ragdoll->"+driver.Key.name+"`\n";
+            cat += " * `ragdoll->" + driver.Key.name + "`\n";
         }
-        Debug.Log("DEBUG> "+boneDrivers.Count+" driver bones:\n"+cat);
+        Debug.Log("DEBUG> " + boneDrivers.Count + " driver bones:\n" + cat);
     }
 
     // Performs DFS on the child gameobjects and prints their name
     private void DumpAllChilds(GameObject root, string ap)
     {
-        Debug.Log("Search: `"+ap+root.name+"`");
+        Debug.Log("Search: `" + ap + root.name + "`");
         foreach (Transform childtf in root.transform)
         {
             GameObject child = childtf.gameObject;
-            DumpAllChilds(child, ap+child.name+"/");
+            DumpAllChilds(child, ap + child.name + "/");
         }
     }
 
@@ -216,13 +231,13 @@ public class PlayerRagdollLogic : MonoBehaviour
     private void IndexBonesSlave(GameObject bone)
     {
         string name = bone.name;
-        
+
         // Find matching bone in the animated source
         // Debug.Log("Search for `"+childname+"`...");
-        GameObject siblingbone = SearchObject(charSource, name, charSource.name+"/");
+        GameObject siblingbone = SearchObject(charSource, name, charSource.name + "/");
         if (!siblingbone)
         {
-            Debug.LogWarning("No matching bone found for bone `ragdoll/Character1_Reference/["+name+"]`!");
+            Debug.LogWarning("No matching bone found for bone `ragdoll/Character1_Reference/[" + name + "]`!");
         }
         else // add to the table
         {
@@ -240,7 +255,7 @@ public class PlayerRagdollLogic : MonoBehaviour
                 //Debug.LogError("OH NO: Driver bone `"+name+"` has no ConfigurableJoint assigned!");
                 boneDrivers.Add(bone, null);
             }
-            else 
+            else
                 boneDrivers.Add(bone, new JointInfo(joint));
 
             // Up the physics precision to minimize glitching
@@ -257,14 +272,14 @@ public class PlayerRagdollLogic : MonoBehaviour
         }
     }
 
-    private GameObject SearchObject(GameObject root, string name, string ap="")
+    private GameObject SearchObject(GameObject root, string name, string ap = "")
     {
         if (name == root.name)
             return root;
         //Debug.Log("Searching: `"+ap+root.name+"`");
         foreach (Transform childtf in root.transform)
         {
-            var result = SearchObject(childtf.gameObject, name, ap+root.name+"/");
+            var result = SearchObject(childtf.gameObject, name, ap + root.name + "/");
             if (result)
                 return result;
         }
@@ -275,7 +290,50 @@ public class PlayerRagdollLogic : MonoBehaviour
     {
         var tf = gameObject.transform.Find(n);
         if (!tf)
-            Debug.LogError("Can't find `"+gameObject.name+"/"+n+"`!");
+            Debug.LogError("Can't find `" + gameObject.name + "/" + n + "`!");
         return tf.gameObject;
+    }
+
+    // Makes the ragdoll's bone "follow" the source animation's bone
+    private void FollowAnimation(JointInfo joint, GameObject bone, Vector3 targetPos, Quaternion targetRot, bool rotation, bool posx, bool posy, bool posz, float driverForce, float driverForceAngle, float driverDampAngle)
+    {
+        if (!bone) // invalid bones?
+        {
+            Debug.LogError("INVALID BONE: " + bone.name);
+            return;
+        }
+
+        //GameObject src = TBLRagdollToSource[bone];
+        Rigidbody rb = bone.GetComponent<Rigidbody>();
+        ConfigurableJoint cj = joint.joint;
+
+        Vector3 delta = targetPos - bone.transform.position;
+        if (!posx) delta.x = 0f;
+        if (!posy) delta.y = 0f;
+        if (!posz) delta.z = 0f;
+        rb.AddForce(delta * joint.drivePosSpringFactor * driverForce);
+
+        // Set joint spring factor
+        var xdrive = cj.angularXDrive;
+        var yzdrive = cj.angularYZDrive;
+        if (rotation)
+        {
+            cj.SetTargetRotationLocal(targetRot, joint.initRotation);
+            xdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * driverForceAngle;
+            xdrive.positionDamper = driverDampAngle;
+            yzdrive.positionSpring = joint.driveSpringBase * joint.driveAngleSpringFactor * driverForceAngle;
+            yzdrive.positionDamper = driverDampAngle;
+        }
+        else
+        {
+            xdrive.positionSpring = 0;
+            xdrive.positionDamper = 0;
+            yzdrive.positionSpring = 0;
+            yzdrive.positionDamper = 0;
+        }
+
+        cj.angularXDrive = xdrive;
+        cj.angularYZDrive = yzdrive;
+        //Debug.Log(bone.name + "-> Joint drive: " + cj.angularXDrive);
     }
 }
