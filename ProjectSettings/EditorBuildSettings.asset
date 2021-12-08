@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Stage_Unity.unity
     guid: 229210cfb0cc1a542ac3ae1ad920d208
   - enabled: 1
-    path: Assets/Scenes/Stage_YACHT.unity
+    path: Assets/Scenes/Stage_OneStep.unity
     guid: 6e8eaf1883387b440aab190b962c8016
   m_configObjects: {}

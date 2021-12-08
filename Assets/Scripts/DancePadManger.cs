@@ -11,7 +11,8 @@ using TMPro;
 [SerializeField]
 public class DancePadManger : MonoBehaviour
 {
-    private AudioSource song;
+    [HideInInspector] public bool isNumPadMode = true;
+    [HideInInspector] public AudioSource song;
     public string songName = null;
     public AudioSource speaker = null;
     public AudioClip resultAudio = null;
@@ -35,7 +36,6 @@ public class DancePadManger : MonoBehaviour
     private float beatInterval;
     private float makingTime;
     private float startingPoint;
-    private int effectTiming = 1;
 
     public List<GameObject> padNumbers = null;
     public List<GameObject> miniPadNumbers = null;
@@ -65,7 +65,6 @@ public class DancePadManger : MonoBehaviour
 
     [HideInInspector] public Vector3 leftTargetPosition;
     [HideInInspector] public Vector3 rightTargetPosition;
-    public Vector3 targetPosition;
     public bool isLeft = false;
     public bool isRight = false;
     // Combo system
@@ -76,6 +75,8 @@ public class DancePadManger : MonoBehaviour
 
     public void setDancePadActive(bool check)
     {
+        if(GameObject.Find("RecordObject") != null)
+            isNumPadMode = GameObject.Find("RecordObject").GetComponent<RecordObjectScript>().getMode();
         isStart = check;
         leftTargetPosition = playerLeftFoot.transform.position;
         rightTargetPosition = playerRightFoot.transform.position;
@@ -96,42 +97,83 @@ public class DancePadManger : MonoBehaviour
                     songBar.fillAmount = song.time / song.clip.length;
                 }
             }
-
-            if (Input.GetKeyDown(KeyCode.Keypad1))
+            if (isNumPadMode)
             {
-                inputFunc(1);
+                if (Input.GetKeyDown(KeyCode.Keypad1))
+                {
+                    inputFunc(1);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad2))
+                {
+                    inputFunc(2);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad3))
+                {
+                    inputFunc(3);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad4))
+                {
+                    inputFunc(4);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad5))
+                {
+                    inputFunc(5);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad6))
+                {
+                    inputFunc(6);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad7))
+                {
+                    inputFunc(7);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad8))
+                {
+                    inputFunc(8);
+                }
+                if (Input.GetKeyDown(KeyCode.Keypad9))
+                {
+                    inputFunc(9);
+                }
             }
-            if (Input.GetKeyDown(KeyCode.Keypad2))
+            else
             {
-                inputFunc(2);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad3))
-            {
-                inputFunc(3);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad4))
-            {
-                inputFunc(4);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad5))
-            {
-                inputFunc(5);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad6))
-            {
-                inputFunc(6);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad7))
-            {
-                inputFunc(7);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad8))
-            {
-                inputFunc(8);
-            }
-            if (Input.GetKeyDown(KeyCode.Keypad9))
-            {
-                inputFunc(9);
+                if (Input.GetKeyDown(KeyCode.Z))
+                {
+                    inputFunc(1);
+                }
+                if (Input.GetKeyDown(KeyCode.X))
+                {
+                    inputFunc(2);
+                }
+                if (Input.GetKeyDown(KeyCode.C))
+                {
+                    inputFunc(3);
+                }
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    inputFunc(4);
+                }
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    inputFunc(5);
+                }
+                if (Input.GetKeyDown(KeyCode.D))
+                {
+                    inputFunc(6);
+                }
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    inputFunc(7);
+                }
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    inputFunc(8);
+                }
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    inputFunc(9);
+                }
             }
 
             if (Input.GetMouseButtonDown(1))
@@ -326,7 +368,6 @@ public class DancePadManger : MonoBehaviour
                 while (makingTime < 0.5f)
                 {
                     makingTime += beatInterval;
-                    effectTiming++;
                 }
 
 
@@ -354,7 +395,7 @@ public class DancePadManger : MonoBehaviour
 
     private IEnumerator futureNote(Note note)
     {
-        yield return new WaitForSecondsRealtime(startingPoint + (note._order - effectTiming) * beatInterval);   // last float is offset
+        yield return new WaitForSecondsRealtime(startingPoint + (note._order) * beatInterval - makingTime);   // last float is offset
 
         int num = note._noteNum - 1;
 
