@@ -11,6 +11,8 @@ using TMPro;
 [SerializeField]
 public class DancePadManger : MonoBehaviour
 {
+    public TextAsset csvFile;
+
     [HideInInspector] public bool isNumPadMode = true;
     [HideInInspector] public AudioSource song;
     public string songName = null;
@@ -22,7 +24,7 @@ public class DancePadManger : MonoBehaviour
     public TextMeshProUGUI inplayCombo = null;
     public Image inplayLife = null;
     public Color[] lifeColor = null;
-    public int playerMaxLife;
+    public int playerMaxLife = 30;
 
     public GameObject resultPanel = null;
     public TextMeshProUGUI resultText = null;
@@ -40,7 +42,6 @@ public class DancePadManger : MonoBehaviour
     public List<GameObject> padNumbers = null;
     public List<GameObject> miniPadNumbers = null;
     public GameObject redEffect = null;
-    public GameObject miniRedEffect = null;
     public RectTransform miniDancepadArea = null;
     public RectTransform centerOfMass = null;
     public Color[] centerOfMassColor = null;
@@ -176,6 +177,7 @@ public class DancePadManger : MonoBehaviour
                 }
             }
 
+
             if (Input.GetMouseButtonDown(1))
             {
                 isMouseDragging = true;
@@ -285,7 +287,6 @@ public class DancePadManger : MonoBehaviour
             setCombo(comboCount + 1);
 
             Destroy(padNumbers[num - 1].transform.GetChild(0).gameObject);
-            Destroy(miniPadNumbers[num - 1].transform.GetChild(0).gameObject);
         }
         else
         {
@@ -350,34 +351,57 @@ public class DancePadManger : MonoBehaviour
         playerLife = playerMaxLife;
 
         song = GetComponent<AudioSource>();
-        string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
 
-        using (Stream s = File.OpenRead(filePath))
+        //string filePath = $"{Environment.CurrentDirectory}/Assets/NoteData/{songName}.csv";
+
+        //csvFile
+        //using (Stream s = File.OpenRead(filePath))
+        //{
+        //    using (StreamReader sr = new StreamReader(s))
+        //    {
+        //        string line = sr.ReadLine();
+        //        bpm = float.Parse(line.Split(',')[0]);
+        //        divider = float.Parse(line.Split(',')[1]);
+        //        startingPoint = float.Parse(line.Split(',')[2]);
+        //        float beatCount = (float)bpm / divider;
+        //        beatInterval = 1 / beatCount;
+        //        makingTime = beatInterval;
+
+
+        //        while (makingTime < 0.5f)
+        //        {
+        //            makingTime += beatInterval;
+        //        }
+
+
+        //        while ((line = sr.ReadLine()) != null)
+        //        {
+        //            Note note = new Note(int.Parse(line.Split(',')[0]), int.Parse(line.Split(',')[1]));
+        //            notes.Add(note);
+        //        }
+        //    }
+        //}
+
+        string[] noteDataFile = csvFile.text.Split('\n');
+
+        bpm = float.Parse(noteDataFile[0].Split(',')[0]);
+        divider = float.Parse(noteDataFile[0].Split(',')[1]);
+        startingPoint = float.Parse(noteDataFile[0].Split(',')[2]);
+        float beatCount = (float)bpm / divider;
+        beatInterval = 1 / beatCount;
+        makingTime = beatInterval;
+
+        while (makingTime < 0.5f)
         {
-            using (StreamReader sr = new StreamReader(s))
-            {
-                string line = sr.ReadLine();
-                bpm = float.Parse(line.Split(',')[0]);
-                divider = float.Parse(line.Split(',')[1]);
-                startingPoint = float.Parse(line.Split(',')[2]);
-                float beatCount = (float)bpm / divider;
-                beatInterval = 1 / beatCount;
-                makingTime = beatInterval;
-
-
-                while (makingTime < 0.5f)
-                {
-                    makingTime += beatInterval;
-                }
-
-
-                while ((line = sr.ReadLine()) != null)
-                {
-                    Note note = new Note(int.Parse(line.Split(',')[0]), int.Parse(line.Split(',')[1]));
-                    notes.Add(note);
-                }
-            }
+            makingTime += beatInterval;
         }
+
+        for (int i = 1; i < noteDataFile.Length; i++)
+        {
+            Note note = new Note(int.Parse(noteDataFile[i].Split(',')[0]), int.Parse(noteDataFile[i].Split(',')[1]));
+            notes.Add(note);
+        }
+
     }
 
     public void startNoteCreation()
@@ -395,16 +419,15 @@ public class DancePadManger : MonoBehaviour
 
     private IEnumerator futureNote(Note note)
     {
-        yield return new WaitForSecondsRealtime(startingPoint + (note._order) * beatInterval - makingTime);   // last float is offset
+        yield return new WaitForSecondsRealtime(startingPoint + (note._order) * beatInterval - makingTime - 0.01f);   // last float is offset
 
         int num = note._noteNum - 1;
 
         GameObject redOb = Instantiate(redEffect, padNumbers[num].transform);
-        GameObject miniRedOb = Instantiate(miniRedEffect, miniPadNumbers[num].transform);
         redOb.SetActive(true);
-        miniRedOb.SetActive(true);
+
         redOb.transform.position = padNumbers[num].transform.position;
-        miniRedOb.transform.position = miniPadNumbers[num].transform.position;
+
         float off = (redEffectFullSize - redOb.transform.localScale.x) / 25;
         int check = 0;
         Color c = redOb.GetComponent<Image>().color;
@@ -419,21 +442,20 @@ public class DancePadManger : MonoBehaviour
                     {
                         check++;
                         redOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 0.6f);
-                        miniRedOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 0.6f);
                     }
                     else if (redOb.transform.localScale.x / redEffectFullSize > 0.99 && check == 1)
                     {
                         check++;
                         redOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 1);
-                        miniRedOb.GetComponent<Image>().color = new Vector4(c.r, c.g, c.b, 1);
                     }
                     redOb.transform.localScale = new Vector3(redOb.transform.localScale.x + off, redOb.transform.localScale.y + off, redOb.transform.localScale.z + off);
-                    miniRedOb.transform.localScale = new Vector3(miniRedOb.transform.localScale.x + off, miniRedOb.transform.localScale.y + off, miniRedOb.transform.localScale.z + off);
                 }
                 else
                     break;
             }
             catch { }
+
+
 
             yield return new WaitForSecondsRealtime(makingTime / 25);
         }
@@ -446,7 +468,6 @@ public class DancePadManger : MonoBehaviour
                 damageLife(num);
 
                 Destroy(redOb);
-                Destroy(miniRedOb);
             }
         }
         catch { }

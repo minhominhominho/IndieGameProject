@@ -78902,6 +78902,10 @@ PrefabInstance:
       propertyPath: EmissionModule.rateOverTime.scalar
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 199768989851257152, guid: 0ed32a763a5b0a248a5ae8147c08e02e, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0ed32a763a5b0a248a5ae8147c08e02e, type: 3}
 --- !u!1 &1077403249
@@ -93858,7 +93862,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4221241231842078795
 RectTransform:
   m_ObjectHideFlags: 0
@@ -94287,7 +94291,7 @@ RectTransform:
   m_GameObject: {fileID: 4221241232054369443}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalScale: {x: 285.63, y: 285.63, z: 285.63}
   m_Children:
   - {fileID: 4221241232153671029}
   - {fileID: 4221241232205357918}
@@ -94306,7 +94310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 682, y: 31}
+  m_AnchoredPosition: {x: -1, y: -285}
   m_SizeDelta: {x: 1500, y: 1500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4221241232054369445
@@ -129822,7 +129826,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6955754147664204272}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.000000015896}
+  m_LocalPosition: {x: 0, y: 0, z: -2.29}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 6955754146976307805}
@@ -129830,7 +129834,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1e-15}
+  m_AnchoredPosition: {x: 0.53, y: -0}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6955754147664204272
@@ -130453,6 +130457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b544adc8415a048b993811a9070f32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  csvFile: {fileID: 4900000, guid: 55a2ffcfa1cba464495e3aaad0642701, type: 3}
   isNumPadMode: 1
   song: {fileID: 0}
   songName: TheFatRat-Unity(105)
@@ -130465,7 +130470,7 @@ MonoBehaviour:
   lifeColor:
   - {r: 1, g: 0.62513876, b: 0.504717, a: 1}
   - {r: 1, g: 0.24313727, b: 0, a: 1}
-  playerMaxLife: 1000
+  playerMaxLife: 30
   resultPanel: {fileID: 4221241233812308678}
   resultText: {fileID: 4221241232002643848}
   resultScore: {fileID: 4221241233404417098}
@@ -130490,7 +130495,6 @@ MonoBehaviour:
   - {fileID: 4221241233169710503}
   - {fileID: 4221241232429275849}
   redEffect: {fileID: 6955754147664204272}
-  miniRedEffect: {fileID: 4221241231842078794}
   miniDancepadArea: {fileID: 4221241232054369444}
   centerOfMass: {fileID: 1718616371}
   centerOfMassColor:
